@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:5.0
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass123
+
+volumes:
+  mongo:
+    driver: local
