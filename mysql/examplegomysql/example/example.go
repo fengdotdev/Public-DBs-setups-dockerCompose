@@ -8,26 +8,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func Example() {
-
-	user:= "root"
-	pass:= "qwerty123"
-	url:= "127.0.0.1"
-	port:= "3306"
-	databasename:= "db"
-	uri := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",user,pass,url,port,databasename)
-
-    // Open up our database connection.
-    db, err := sql.Open("mysql",uri)
-
-    // if there is an error opening the connection, handle it
-    if err != nil {
-        log.Print(err.Error())
-    }
-    defer db.Close()
-
-   CreateDB("exampleDB",db)
-}
 
 
 type Tag struct {
@@ -37,32 +17,77 @@ type Tag struct {
 
 
 
+func Example() {
 
-func command (cmd string,db *sql.DB)(*sql.Rows,error){
-results, err := db.Query(cmd)
+	user:= "root"
+	pass:= "qwerty123"
+	url:= "127.0.0.1"
+	port:= "3306"
+    databasename:= "exampleCarDB" 
+	uriNODB := fmt.Sprintf("%s:%s@tcp(%s:%s)/",user,pass,url,port)
+	uri := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",user,pass,url,port,databasename)
+if false{
+ db, err := sql.Open("mysql",uriNODB)
     if err != nil {
-		return nil, err
+        log.Print(err.Error())
     }
-	return results , nil
+    defer db.Close()
+
+     _, err = db.Query("CREATE DATABASE exampleCarDB ;")
+    if err != nil {
+        panic(err.Error()) // proper error handling instead of panic in your app
+    }
 }
-func CreateDB(databasename string,db *sql.DB){
-	cmd:=  fmt.Sprintf("CREATE DATABASE %s;",databasename)
-	_, err:= command(cmd, db)
-	log.Println(err)
+   
+
+    log.Println("done...")
+     db1, err := sql.Open("mysql",uri)
+    if err != nil {
+        log.Print(err.Error())
+    }
+    defer db1.Close()
+
+    exampleQueryDatabase(db1)
+
 }
 
 
-func CreateTable(tablename string,structure string, db *sql.DB){
 
-	cmd:= fmt.Sprintf("CREATE TABLE %s(%s);",tablename,structure)
-	result, _:= command(cmd, db)
-	log.Println(result)
+type cars struct{
+
 }
 
 
+func exampleQueryDatabase(db *sql.DB){
+ if false{
+    _, err := db.Query("CREATE TABLE  Cars (CarId int, Brand varchar(255), Model varchar(255));")
+    if err != nil {
+        panic(err.Error()) // proper error handling instead of panic in your app
+    }
+ }
+    
+    _, err := db.Query("INSERT INTO  Cars VALUES  ('1','lada', '$606k');")
+    if err != nil {
+        panic(err.Error()) // proper error handling instead of panic in your app
+    }
+
+    result, err := db.Query("SELECT * FROM Cars")
+    if err != nil {
+        panic(err.Error()) // proper error handling instead of panic in your app
+    }
+
+    result.Close()
+
+}
+/*
 
 
-func example(db *sql.DB){
+exampleQueryCreateTable(){
+    
+}
+
+
+func exampleCreateTable(db *sql.DB){
  // Execute the query
     results, err := db.Query("SELECT id, name FROM tags")
     if err != nil {
@@ -80,3 +105,5 @@ func example(db *sql.DB){
         log.Printf(tag.Name)
     }
 }
+
+*/
